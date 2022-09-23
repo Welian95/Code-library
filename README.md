@@ -52,11 +52,11 @@ git add	<dataname>
 git commit -m <„massage“>	
 #bei einem Commit werden alle geaddeten Daten gespeichert
 
-## 6. Alle Dateien werden geaddet
-git add *				
+## 6. Dateien dem Repo hinzufügen (* = alle)
+git add <Dateiname.rtf>		; <*>	
 
-## 7. Alle .rtf Dateien werden geaddet
-git add.rtf				
+## 7.  Dateien aus dem Repo entfernen (* = alle)
+git rm <Dateiname.rtf>		; <*>	
 
 ## 8. Anzeigen aller Änderungen inkl. Datum 
 git log					
@@ -77,8 +77,17 @@ git diff HEAD
 ## 12. Ausgabe aller Änderungen an nicht committeten Datein 
 git diff -- stage
 
-# 13. Zurücksetzen der geaddeten aber nicht committen Änderungen: * = alle; <Dateiname>
+## 13. Zurücksetzen der geaddeten aber nicht committen Änderungen: * = alle; <Dateiname>
 git resest * 
 
-# Erstellen eines neuen Branches = neuer Änderungs Zweig für Testzwecke 
+## 14. Erstellen eines neuen Branches = neuer Änderungs Zweig für bsp. Testzwecke 
 git branch <branch_name>
+
+## 15. Wechseln des branches 
+git checkout <branch_name>
+
+## 16. Verbinden der beiden Branches! Achtung es wird der im Befehl angegeben branch als aktuellster Ausgewählt und der andere überschrieben 
+git merge <branch_name>
+
+## 17. Löschen eines Branches 
+git branch -d <branch_name>
