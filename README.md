@@ -61,5 +61,7 @@ git add.rtf
 ## 8. Anzeigen aller Änderungen inkl. Datum 
 git log					
 
-## 9. Uplaod auf GitHub „main or master „
+## 9. Uplaod auf GitHub „main or master„
 git push -u origin main 		
+
+### git push -f origin main #nur im Notfall, das repo wird 1:1 mit den lokalen Daten überschrieben 
