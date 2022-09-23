@@ -5,7 +5,7 @@
 # Installation
 
 ## Install git on macOS
-### In comandlinie terminal
+#### In comandlinie terminal
 
 ## 1. install hombrew 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -14,7 +14,7 @@
 brew install git
 
 ## Install git on Windows
-### In comandlinie terminal
+#### In comandlinie terminal
 
 ## 1.
 
@@ -24,9 +24,9 @@ brew install git
 
 ## 3. connect repo to GitHub!
 git remote add origin https://github.com/Welian95/Code-library.git 
-### hier muss ein git reposetory unter github erstellt werden 
+#### hierfür muss ein git reposetory unter github erstellt werden, wo man den Link erhält
 
-### 4. login mit einem dafür erstellten Token als Passwort 
+## 4. login mit einem dafür erstellten Token als Passwort 
 Craete a personal access token to use as password for git https://github.com/settings/tokens/new
 
 
@@ -34,7 +34,7 @@ Craete a personal access token to use as password for git https://github.com/set
 
 # New Repository
 
-### In comandlinie terminal:
+#### In comandlinie terminal:
 
 ## 1. Neues Reposetory in aktuellem Ordner erstellen
 git init  				
@@ -64,7 +64,7 @@ git log
 ## 9. Uplaod auf GitHub „main or master„
 git push -u origin main 		
 
-### git push -f origin main #nur im Notfall, das repo wird 1:1 mit den lokalen Daten überschrieben 
+#### git push -f origin main #nur im Notfall, das repo wird 1:1 mit den lokalen Daten überschrieben 
 
 
 
@@ -80,14 +80,20 @@ git diff -- stage
 ## 13. Zurücksetzen der geaddeten aber nicht committen Änderungen: * = alle; <Dateiname>
 git resest * 
 
+
 ## 14. Erstellen eines neuen Branches = neuer Änderungs Zweig für bsp. Testzwecke 
 git branch <branch_name>
+#### Branches werden zu Testzwecken oder in Zusammenarbeit mit Anderen genutzt
+
 
 ## 15. Wechseln des branches 
 git checkout <branch_name>
 
-## 16. Verbinden der beiden Branches! Achtung es wird der im Befehl angegeben branch als aktuellster Ausgewählt und der andere überschrieben 
+## 16. Verbinden der beiden Branches 
+#### !Achtung! es wird der im Befehl angegeben branch als aktuellster Ausgewählt und der andere überschrieben.
 git merge <branch_name>
 
 ## 17. Löschen eines Branches 
 git branch -d <branch_name>
+
+test test 
