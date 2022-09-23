@@ -65,3 +65,20 @@ git log
 git push -u origin main 		
 
 ### git push -f origin main #nur im Notfall, das repo wird 1:1 mit den lokalen Daten überschrieben 
+
+
+
+## 10. Download von GitHub
+git pull origin main
+
+## 11. Ausgabe der letzten lokalen Änderungen 
+git diff HEAD
+
+## 12. Ausgabe aller Änderungen an nicht committeten Datein 
+git diff -- stage
+
+# 13. Zurücksetzen der geaddeten aber nicht committen Änderungen: * = alle; <Dateiname>
+git resest * 
+
+# Erstellen eines neuen Branches = neuer Änderungs Zweig für Testzwecke 
+git branch <branch_name>
