@@ -1,0 +1,18 @@
+#kivy 2.1.0
+<Button>:
+    font_size: 40
+    color: 0.3, 0.6, 0.7, 1
+    size_hint: 0.3 ,0.5
+
+<FloatLayout>:
+
+    Button:
+        pos_hint: {"x":0.5,"top":1}
+        text: "Knopf"
+        background_color: (0.3, 0.4, 0.5, 1)
+
+    Button:
+        id: btn
+        pos_hint: {"y":0.3}
+        text: "Drück mich" if btn.state == "normal" else "Danke!"
+        background_color: (0.3, 0.4, 0.5, 1) if btn.state == "normal" else (0.0, 0.0, 0.0, 1)

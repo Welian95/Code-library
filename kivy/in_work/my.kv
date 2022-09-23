@@ -1,0 +1,33 @@
+#kivy 2.1.0
+<MyGrid>
+
+    #Variables for python
+    name_var: name_id
+    email_var: email_id
+
+    #Main-Grid
+    GridLayout:
+        cols:1
+        size: root.width-0, root.height-0
+        pos: 0, 0
+        #Inside-Grid
+        GridLayout:
+            cols:2
+
+            Label:
+                text: 'Name: '
+
+            TextInput:
+                id: name_id
+                multiline:False
+
+            Label:
+                text: 'E-Mail: '
+
+            TextInput:
+                id:email_id
+                multiline:False
+        Button:
+            text:'Submit'
+            on_press: root.Button()
+            font_size:100
