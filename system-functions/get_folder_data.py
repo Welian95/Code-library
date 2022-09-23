@@ -1,4 +1,5 @@
 import glob
+import sys, os
 from datetime import date
 
 # get todays date
@@ -18,5 +19,8 @@ xlsx_list = glob.glob("*.xlsm")
 
 Excel_name = xlsx_list[0] 
 
+# get the directory were this .py is working
+print (os.getcwd() )
+print ( os.path.realpath("") )
 
-print (file_list)
+print ( os.path.abspath("s")) 
