@@ -16,9 +16,13 @@ brew install git
 ## Install git on Windows
 #### In comandlinie terminal
 
-## 1.
+## 1. Install git with this link 
+https://git-scm.com/download/win
 
-## 2.
+## 2. double tap and follow the steps 
+
+## set git configurations 
+git config -h
 
 # Connect to GitHub
 
