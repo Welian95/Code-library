@@ -26,11 +26,14 @@ git config -h
 
 # Connect to GitHub
 
-## 3. connect repo to GitHub!
+## 3. Neues Reposetory in aktuellem Ordner erstellen
+git init  
+
+## 4. connect repo to GitHub!
 git remote add origin https://github.com/Welian95/Code-library.git 
 #### hierfür muss ein git reposetory unter github erstellt werden, wo man den Link erhält
 
-## 4. login mit einem dafür erstellten Token als Passwort 
+## 5. login mit einem dafür erstellten Token als Passwort 
 Craete a personal access token to use as password for git https://github.com/settings/tokens/new
 
 
@@ -43,7 +46,7 @@ Craete a personal access token to use as password for git https://github.com/set
 ## 1. Neues Reposetory in aktuellem Ordner erstellen
 git init  				
 
-##2. Namen des Branches ändern
+## 2. Namen des Branches ändern
 git branch -m <name>
 
 ## 3. aktuellen Status des Repos anzeigen
