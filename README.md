@@ -1,6 +1,6 @@
 # README
 
-### This is my github-library, to learn thinks like git, python and more. This README is for using git and its in german.
+### This is my github-library, to learn thinks like git, python and more. This README is for using git and its mostly in german.
 
 # Installation
 
@@ -95,5 +95,3 @@ git merge <branch_name>
 
 ## 17. Löschen eines Branches 
 git branch -d <branch_name>
-
-test test 
