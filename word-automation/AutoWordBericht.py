@@ -1,307 +1,271 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ### Ausfüllen des Handbuchs 
-
-# In[1]:
-
-
-from docxtpl import DocxTemplate, InlineImage
+from docxtpl import DocxTemplate, InlineImage #pip install docxtpl
 from datetime import date
 from random import randint
-import pandas as pd
 import glob
-import os
-from PIL import Image
+import pandas as pd #pip install pandas
+import os, sys
+from PIL import Image #pip install pillow
+from docx.shared import Cm, Inches , Mm , Emu
+import shutil
+
+
+import xlwings as xw #pip install xlwings
+
+import kivy         #pip install kivy
+
+from kivy.app import App #Importieren der Klasse App
+from kivy.uix.label import Label #Importieren der Überschrift für die App 
+from kivy.uix.gridlayout import GridLayout #Import eines Layouts
+from kivy.uix.textinput import TextInput #Import des Layouts für Usereingabeb 
+from kivy.uix.button import Button #Importieren des Userlayoutrs für Schalter 
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.popup import Popup
+from kivy.core.window import Window
+from kivy_deps import sdl2, glew
+
+class MyGrid(GridLayout): 
+
+    #Aufbau der App (Grid etc.)
+    def __init__ (self, **kwargs): 
+        super(MyGrid, self).__init__(**kwargs) 
+        self.cols = 1                               #Anzahl der Spalten im Main-Grid
+
+        #Inside-Grid -- Erstellen eines Gitters in dem Gitter damit man unterschiedlich viele Spalten untereineander nutzen kann 
+        self.inside = GridLayout()
+        self.inside.cols = 2                        #Anzahl der Spalten im Inside_Grid
+
+
+        self.inside.add_widget(                     #erstellen eines Widgets
+            Label(text = 'Pfad zum Vorlagen-Ordner: \n(Wordvorlage)',   #Erstellen eines Labels im Widget
+            font_size = 20  ) )                     #Schriftgröße
+        self.template = TextInput(font_size = 20 ,multiline = True, text = "" ) #multiline = mehrere Zeilen 
+        self.inside.add_widget(self.template)           #Erstellen einer TextInput-Box
+
+        self.inside.add_widget(                     #erstellen eines Widgets
+            Label(text = 'Pfad zum Projekt-Ordner: \n(-Berichtsdaten.xlsm \n -"pictures"-Ordner\n-Ausgabe)',  #Erstellen eines Labels im Widget
+            font_size = 20  ) )                     #Schriftgröße
+        self.place = TextInput(font_size = 20 ,multiline = True, text = "" ) #multiline = mehrere Zeilen 
+        self.inside.add_widget(self.place)           #Erstellen einer TextInput-Box
+        
+        self.inside.add_widget(                     #erstellen eines Widgets
+            Label(text = 'Anzahl übersprungender Arbeitsmappen: \n(Achtung! nicht ändern wenn nicht notwendig!)',   #Erstellen eines Labels im Widget
+            font_size = 12  ) )                     #Schriftgröße 
+        self.no_iteres = TextInput(font_size = 12 ,multiline = True, text = "9")
+        self.inside.add_widget(self.no_iteres)           #Erstellen einer TextInput-Box
+
+        self.add_widget (self.inside)               #Einfügen des Inside-Grids als Widget in das Main-Grid
+        
+        #Main-Grid
+
+        self.submit = Button (                      #Erstellen eines neuen Buttons namens submit
+            text ='Bericht generieren',             #Beschriftung des Buttons
+            font_size = 40 )                        #Schriftgröße anpassen
+        self.submit.bind(on_press=self.pressed)     #Aktion welche eintrit wenn der Button geklickt wird - hier Ausführen der Funktion pressed
+        self.add_widget(self.submit)                #Erstellen des Widgets für den Button damit dieser angezeigt wird 
+
+
+    #Pop-up window 
+    def textpopup(self, title='', text=''):
+        """Open the pop-up with the name.
+
+        :param title: title of the pop-up to open
+        :type title: str
+        :param text: main text of the pop-up to open
+        :type text: str
+        :rtype: None
+        """
+        box = BoxLayout(orientation='vertical')
+        box.add_widget(Label(text=text,))
+        popup = Popup(title=title, content=box ,size_hint=(None, None), size=(800, 200) )
+        popup.open()
 
-#Excel:
-import xlwings as xw
+    def pressed(self, instance):
+        '''This is a funktion to give the button an aktion '''
+        #speichern der Eingegebenen Variable self.name als name
+        run_path= str(rf'{self.place.text}')
+        
+        template_path = str(rf'{self.template.text}')
+        
+        run_path = run_path.replace('\\',"\\\\")
+        
 
+        
+        template_path = template_path.replace('\\',"\\\\")
 
-# ### get todays date
+        print( run_path,template_path)
+        #self.place.text = ''         #Feld leeren
+        #self.template.text= '
 
-# In[2]:
+        ###################################################Berichtsdaten##################################################################################
+        
+        #get todays date
+        today = date.today().strftime("%d.%m.%Y") #todays date with given format
+        
+        #Input names:
+        os.chdir(run_path)
 
+        path_pictures = rf'{run_path}\pictures' #Pfad für Bilder
+        path_picture_source = rf'{template_path}pictures'
 
-today = date.today().strftime("%d.%m.%Y") #todays date with given format
+        # ## Find Word-Template-file
+        word_list =[ item for item in os.listdir(template_path) if item.endswith('.docx')] #list of all files that end with .xlsm in Folder
+        docx_name = rf'{template_path}\{word_list[0]}' #gets the #Pfad der Vorlage
 
+        # ## Find Excel-Template-file
+        excel_list_source =[ item for item in os.listdir(template_path) if item.endswith('.xlsm')] #list of all files that end with .xlsm in Folder
+        excel_source = rf'{template_path}\{excel_list_source[0]}' #gets the #Pfad der Vorlage
 
-# ## Load Excel-file
 
-# ### list of all files that end with .xlsx in Folder
+        #check Excel path and if path not exist create a new one
+        if not glob.glob(run_path + '/' + '*.xlsm'): 
+            shutil.copy(excel_source, run_path)
 
-# In[3]:
+        # Check picture path and if path not exist create a new one
+        if not os.path.exists(path_pictures): 
+ 
+            shutil.copytree(path_picture_source, path_pictures)
 
 
-xlsx_list = glob.glob("*.xlsm")
-xlsx_list
+        #List all picture files
+        picture_list =[ item for item in os.listdir(path_pictures) if item.endswith('.png')] #List all picture files
 
 
-# In[4]:
+        # ## Load Excel-file
+        xlsx_list =[ item for item in os.listdir(run_path) if item.endswith('.xlsm')] #list of all files that end with .xlsm in Folder
+        Excel_name = xlsx_list[0] #gets the first excel in folder
+        wk = xw.Book(Excel_name) # opens excel-file
+        no_itersheets = int(self.no_iteres.text)            #Anzahl der nicht zur Iteration genutzten Arbeitsblätter im Bericht, von Startseite bis X. Ab X dürfen nur noch iterierbare Tabellenblätter kommen. (Abbildungsblätter werden nicht gezählt)
 
+        # ### create data out of excel sheets  --- Iterationsblätter
 
-Excel_name = xlsx_list[0] #gets the first excel in folder
+        context_data ={}
+        for i in list(wk.sheets)[no_itersheets:]: #begin with the no_itersheets. worksheet !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            sheet = wk.sheets(i)
+            context_data.update ( {str(i).split(']')[-1].split('>')[0] : sheet['A9'].expand().options(pd.DataFrame,numbers=int,empty='', dtype=str,chunksize=10_000).value.reset_index().to_dict('records')   }) #Name deklarieren und Einlesen des Inhalts-> Speichert alle Werte(.values) ab 'A9' als DataFrame, Chunksize = Matrixgröße ,numbers = int -> keine Dezimalstellen,empty=''->leere zellen sind nicht 'none',  )
+            
+            
+        for i in list(context_data.keys()):        #for every key (with dict as value)
+            for j in range(len(context_data[i])):  #go over every list, wich is in the top dict   
+                context_data[i][j] = {k: v for k, v in context_data[i][j].items() if v != ''} #go over every dict in list and delete every key-value-pair if value is None ('')
+        
+        for i in list(context_data.keys()):
+            context_data[i] = [item for item in context_data[i] if item] #delete every empty dict
 
 
-# In[5]:
+        # ### Textvariablen-sheet (Startseite)
 
+        sheet = wk.sheets(1) #opens first map in excel
 
-wk = xw.Book(Excel_name) # opens excel-file
+        df_data = sheet['A9'].expand().options(pd.DataFrame, chunksize=10_000).value #Einlesen des Inhalts-> Speichert alle Werte(.values) ab 'A2' als DataFrame, Chunksize = Matrixgröße
 
 
-# # Get every sheet that exists 
+        #Get data from excel to resize the pictures
+        df_pic_size= sheet['F10'].expand().options(pd.DataFrame, chunksize=10_000).value.index.tolist()
+        df_pic_size = [int (x) for x in df_pic_size]
+        df_pic_size = [str (x) for x in df_pic_size]
 
-# In[6]:
+        ###df_data
+        text_data = df_data.iloc[:,0].to_dict() #Dateframes first column to dict
+        text_data['today']=today #add todays date
 
+        ###text_data
 
-###wk.sheets
+        objektname = text_data['Objektname'] #decline Name of objkt
+        auftraggeber = text_data['Auftraggeber'] #decline Name of company
 
 
-# Sheet_Names = [ str(list(sheets.keys())[a]).split(']')[-1].split('>')[0] for a in range (len (wk.sheets)) ]
-# 
-# Sheet_Names
+        # ## Load all Pictures 
 
-# Sheet_Names[1:]
+        picture_w_ending = [picture.split('\\')[-1] for picture in picture_list]
 
-# context_data ={}
-# 
-# for i in range (len (Sheet_Names[1:])):
-#     
 
-# ### Create a dict with all excel tabels (beside nr.1) and but every row do another dict 
+        # ### Get all picture names 
 
-# In[7]:
+        picture_name = [picture.split('.')[0] for picture in picture_w_ending]
 
 
-context_data ={}
 
 
-# In[8]:
+        # ### Load docx-file to write in it 
 
 
-context_data ={}
-for i in list(wk.sheets)[1:]: #begin with the second worksheet
-    sheet = wk.sheets(i)
-    context_data.update ( {str(i).split(']')[-1].split('>')[0] : sheet['A9'].expand().options(pd.DataFrame,numbers=int,empty='', dtype=str,chunksize=10_000).value.reset_index().to_dict('records')   }) #Name deklarieren und Einlesen des Inhalts-> Speichert alle Werte(.values) ab 'A9' als DataFrame, Chunksize = Matrixgröße ,numbers = int -> keine Dezimalstellen,empty=''->leere zellen sind nicht 'none',  )
-    
-#context_data
+        doc = DocxTemplate(docx_name) 
 
+ 
 
-# ### Textvariablen-sheet 
+        g = [f'pictures\\{i}'for i in picture_list] #name of all pics
 
-# In[9]:
 
+        d = df_pic_size #Size of all pics 
 
-sheet = wk.sheets(1) #opens first map in excel
+        imagen = []
+        for (a,b) in zip (g,d):
+            imagen.append ( f'(InlineImage(doc,"{a}", Cm({b})))')
 
 
-# In[10]:
 
+        ###imagen
 
-df_data = sheet['A9'].expand().options(pd.DataFrame, chunksize=10_000).value #Einlesen des Inhalts-> Speichert alle Werte(.values) ab 'A2' als DataFrame, Chunksize = Matrixgröße
 
-###df_data
+        # ### write an dict to to dicline names to code 
 
 
-# In[11]:
+        image_dict = {}
+        #doc = [] # must be dicline but gets overwritten later 
 
+        for (name, link)  in zip (picture_name, imagen):
 
-text_data = df_data.iloc[:,0].to_dict() #Dateframes first column to dict
+            image_dict.update({name : eval(link)})
+            
 
-text_data['today']=today #add todays date
+        # ### create one dict out off multile dicts 
 
-###text_data
+        dicts = [text_data,image_dict] 
 
 
-# In[12]:
+        for dict in dicts:
+            context_data.update(dict)
+            
 
+        # ## Create Context to write in word 
+        context = context_data
 
-objektname = text_data['Objektname'] #decline Name of objkt
 
+        # ### write into word
 
-# ## Load all Pictures 
 
-# ### list of all files that are in folder 'pictures'
+        doc.render(context)     #render context into document
 
-# ### Get all png files
 
-# In[13]:
+        doc.save(f'§{today}_{objektname}_{auftraggeber}.docx') #save document with new ending count
 
 
-picture_list = glob.glob("pictures/*.png")
+        # ### Bildvariablen in Excel schreiben 
 
-###picture_list
+        picture_name = ['{{' + i + '}}' for i in picture_name]
 
+        ###picture_name
 
-# In[14]:
 
 
-picture_w_ending = [picture.split('\\')[-1] for picture in picture_list]
+        pic_vars = pd.DataFrame(picture_name)
 
-###picture_w_ending
+        sheet = wk.sheets(1) #Öffnen der Excel-Arbeitsmappe 
+        df = sheet.range('E10').value = pic_vars.set_index(0)
 
+        wk.close
 
-# ### Get all picture names 
+        # popup if done
 
-# In[15]:
+        self.textpopup(title='AutoWordBericht.exe', text='Ihr Bericht wurde erfolgreich generiert!')
 
 
-picture_name = [picture.split('.')[0] for picture in picture_w_ending]
 
-###picture_name
+#Ausführen der App
 
+class MyApp (App):  #Erstellen einer eigenen App-Klasse, welche von der Kivy.app erbt. Auch der Konstruktor wiurd vererbt deshalb ist das Auffrufen der __init__ nicht nötig
+    def build(self):
+        return MyGrid()
 
-### ### Read a Table with fig sizes
-##fig_sizes = wk.sheets[0]['F10'].expand().options(pd.DataFrame,chunksize=10_000).value.reset_index()
-##
-#####fig_sizesfig_sizes.iloc[0,0] #Breitefig_sizes.iloc[0,1] #Längeim_size_laenge = []
-##im_size_breite = []
-##
-##for i in range(len(picture_list)):
-##                image = Image.open(glob.glob("pictures/*.png")[i])
-##                im_size_laenge.append(image.size[0])
-##                im_size_breite.append(image.size[1])
-##                
-##pd.DataFrame(im_size_breite,im_size_laenge)
-### ### Change every given PNG-file in folder to given size 
-##for i in range(len(picture_list)):
-##                image = Image.open(glob.glob("pictures/*.png")[i])
-##                image = image.resize((int(fig_sizes.iloc[i,0]),int(fig_sizes.iloc[i,1])),Image.ANTIALIAS)
-##                image.save(fp=f'pictures/{picture_w_ending[i]}')
-### ## Load Word-file
-
-# ### list of all files that end with .docx
-
-# In[16]:
-
-
-docx_name = glob.glob("*.docx")
-
-###docx_name
-
-
-# ### decline filename
-
-# In[17]:
-
-
-docx_name = docx_name[0] #gets first docx in folder
-
-###docx_name
-
-
-# ### Load docx-file to write in it 
-
-# In[18]:
-
-
-doc = DocxTemplate(docx_name) 
-
-###doc
-
-
-# ## Insert Pictures
-
-# In[19]:
-
-
-###InlineImage(doc,"pictures\\Auflistung_Transmission.png",width)
-
-
-# ### write an insert code for each picture given 
-
-# In[20]:
-
-
-imagen = [f'(InlineImage(doc,"{i}"))' for i in glob.glob("pictures/*.png")]
-
-###imagen
-
-
-# ### write an dict to to dicline names to code 
-
-# In[21]:
-
-
-image_dict = {}
-#doc = [] # must be dicline but gets overwritten later 
-
-for (name, link)  in zip (picture_name, imagen):
-
-    image_dict.update({name : eval(link)})
-    
-###image_dict
-
-
-# ## Create Context to write in word 
-
-# ### create one dict out off multile dicts 
-
-# In[22]:
-
-
-#dicts = [text_data,names_dict,Tabelle2_dict]
-dicts = [text_data,image_dict] 
-
-#context_data = {} #ersetzen
-
-for dict in dicts:
-    context_data.update(dict)
-    
-### context_data
-
-
-# In[ ]:
-
-
-
-
-
-# In[23]:
-
-
-context = context_data
-
-
-# ### write into word
-
-# In[24]:
-
-
-doc.render(context)     #render context into document
-
-doc.save(f'§{today}_{objektname}_Sprinkenhof.docx') #save document with new ending count
-
-
-# In[25]:
-
-
-#context
-
-
-# ### Bildvariablen in Excel schreiben 
-
-# In[26]:
-
-
-picture_name = ['{{' + i + '}}' for i in picture_name]
-
-###picture_name
-
-
-# In[27]:
-
-
-pic_vars = pd.DataFrame(picture_name)
-
-###pic_vars.set_index(0)
-
-
-# In[28]:
-
-
-sheet = wk.sheets(1) #Öffnen der Excel-Arbeitsmappe 
-df = sheet.range('E10').value = pic_vars.set_index(0)
-
-wk.close
-
+if __name__ =='__main__':
+    MyApp().run() #Starten der App mit der Methode 'run' welche MyApp von der Kivy.app geerbt hat

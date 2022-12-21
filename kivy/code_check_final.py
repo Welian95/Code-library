@@ -24,7 +24,7 @@ class MyGrid(GridLayout): #Klasse welche alle Design-Element enthält, erbt ein 
         self.inside.add_widget(                #erstellen eines Widgets
             Label(text = 'Input the secret code: ', #Erstellen eines Labels im Widget
             font_size = 80  ) )         #Schriftgröße
-        self.code = TextInput(font_size = 120 ,multiline = False) #multiline = mehrere Zeilen 
+        self.code = TextInput(font_size = 120 ,multiline = False, text =  "test") #multiline = mehrere Zeilen 
         self.inside.add_widget(self.code)      #Erstellen einer TextInput-Box
 
         self.add_widget (self.inside) #Einfügen des Inside-Grids als Widget in das Main-Grid
@@ -63,7 +63,9 @@ class MyGrid(GridLayout): #Klasse welche alle Design-Element enthält, erbt ein 
         else: 
             self.textpopup(title='Your input is...', text='Incorrect !')
 
+        print (self.code.text)
         self.code.text = ''         #Feld leeren
+
 
 
 class CodeCheck (App):  #Erstellen einer eigenen App-Klasse, welche von der Kivy.app erbt. Auch der Konstruktor wiurd vererbt deshalb ist das Auffrufen der __init__ nicht nötig

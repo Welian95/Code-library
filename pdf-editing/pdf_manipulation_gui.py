@@ -1,12 +1,13 @@
 from pdf2docx import Converter
 from PyPDF2 import  PdfMerger
-import glob, os
+import glob, os, sys
 from kivy.app import App #Importieren der Klasse App
 from kivy.uix.label import Label #Importieren der Überschrift für die App 
 from kivy.uix.gridlayout import GridLayout #Import eines Layouts
 from kivy.uix.textinput import TextInput #Import des Layouts für Usereingabeb 
 from kivy.uix.button import Button #Importieren des Userlayoutrs für Schalter 
 import pygame
+from kivy_deps import sdl2, glew
 
 class MyGrid(GridLayout): #Klasse welche alle Design-Element enthält, erbt ein Layout von kivy.uix.gridlayout
     def __init__ (self, **kwargs): #Konstruktor für das Layout, **kwargs steht für unendliche viele eingetragbare keywords
