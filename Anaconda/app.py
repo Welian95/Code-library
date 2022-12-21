@@ -14,7 +14,7 @@ import streamlit as st
 
 #Achtung Streamlit muss in der Virtuelen Umgebung ausgeführt werden in der auch die app.py liegt!
 
-st.title('Hello Julian__') #create the Titel of the page
+st.title('Hello Julian__hh') #create the Titel of the page
 
 st.text('This is a streamlit app to run all of Julians code') #Text on page 
 st.markdown (' This is **markdown**') #Markdown language with operators like '###' fpr headings ans '**' for bold 
